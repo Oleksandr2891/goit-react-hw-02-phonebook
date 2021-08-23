@@ -1,0 +1,17 @@
+.wrapperCommon {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+
+.wrapperLeft {
+    display: flex; 
+    align-items: flex-end;
+}
+
+.posFeedback {
+    color: darkred;
+    font-size:16px;
+    font-weight: 800;
+    line-height: 1.4;
+}
