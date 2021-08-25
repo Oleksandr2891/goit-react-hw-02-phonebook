@@ -1,11 +1,11 @@
-import css from './Section.module.css'
+import { SectionContainer } from "./SectionStyled";
 
 const Section = ({ title, children }) => {
     return (
-        <section className={css.section}>
-            <h1 className={css.title}>{title}</h1>
+        <SectionContainer>
+            <h1 className="title">{title}</h1>
             {children}
-        </section>
+        </SectionContainer>
     );
 }
 

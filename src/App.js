@@ -1,41 +1,65 @@
 import { Component } from 'react';
-import Statistics from './Componenets/Statistics/Statistics';
-import FeedbackOptions from './Componenets/FeedbackOptions/FeedbackOptions';
+import ContactList from './Componenets/ContactList/ContactList';
+import FIlter from './Componenets/Filter/FIlter';
+import Form from './Componenets/Form/Form';
 import Section from './Componenets/Section/Section';
-import Notification from './Componenets/Notification/Notification';
+import { contacts } from './contacts.json';
+import GlobalStyles from "../src/style/GlobalStyle";
 
 
 class App extends Component {
   state = {
-    good: 0,
-    neutral: 0,
-    bad: 0
-  }
+    contacts,
+    filter: ''
 
-  countTotalFeedback = () => Object.values(this.state).reduce((acc, value) => acc + value);
-
-  countPositiveFeedbackPercentage = () => {
-    const total = Object.values(this.state).reduce((acc, value) => acc + value);
-    const percentage = Math.round(this.state.good / total * 100);
-    return percentage;
   };
 
-  handleCounterFeedBack = (name) => this.setState(prevState => ({ [name]: prevState[name] + 1 }));
+  onDeleteContact = contactId => {
+    this.setState(prevState => ({
+      contacts: prevState.contacts.filter(contact => contact.id !== contactId)
+    }));
+  };
+
+  handleSubmit = data => {
+    this.setState(prevState => {
+      const findName = prevState.contacts.find(item => item.name === data.name);
+      if (!findName) {
+        return { contacts: [data, ...prevState.contacts] }
+      } else {
+        return alert(`${data.name} is already in contacts`)
+      }
+    }
+    );
+  };
+
+  onChangeFilter = event => {
+    this.setState({ filter: event.currentTarget.value })
+  };
+
+
+  getVisibleContacs = () => {
+    const { filter, contacts } = this.state
+    const normalizedFilter = filter.toLowerCase();
+    return contacts.filter(contact =>
+      contact.name.toLowerCase().includes(normalizedFilter))
+  };
+
 
   render() {
-    const { good, neutral, bad } = this.state;
-    const nameButtons = Object.keys(this.state);
-    const total = this.countTotalFeedback();
-    const positivePercentage = this.countPositiveFeedbackPercentage();
+    const { filter } = this.state;
+    const visibleContacts = this.getVisibleContacs();
 
     return (
       <>
-        <Section title={'Please leave feedback'}>
-          <FeedbackOptions nameButtons={nameButtons} onLeaveFeedback={this.handleCounterFeedBack} />
+        <GlobalStyles />
+        <Section title={'Phonebook'}>
+          <Form onSubmit={this.handleSubmit} />
         </Section>
-        <Section title={'Statistics'}>
-          <Statistics good={good} neutral={neutral} bad={bad} total={total} percentage={positivePercentage} />
-          <Notification message={'No feedback given'} total={total} />
+        <Section title={'Contacts'}>
+          <div className="contactsWrapper">
+            <FIlter filter={filter} onChange={this.onChangeFilter} />
+            <ContactList contacts={visibleContacts} onDeleteContact={this.onDeleteContact} />
+          </div>
         </Section>
       </>
     );
